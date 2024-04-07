@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: aron918/notification-service-tele-insight-capstone-project:71f5a641fc4fd9d1cc29ef75d3ed4877f4ade2eb
+          ports:
+            - containerPort: 8084
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "http://kafka:9092"
+            - name: SERVER_PORT
+              value: "8084"
+            - name: MAIL_HOST
+              value: "smtp.mail.yahoo.com"
+            - name: MAIL_USERNAME
+              value: "girumtim@yahoo.com"
+            - name: MAIL_PASSWORD
+              value: "sinoseeewdjzeroj"
+            - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+              value: http://service-discovery:8761/eureka/

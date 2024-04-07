@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ticketing-db-dep
+spec:
+  serviceName: "ticketing-db-svc"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-postgres
+  template:
+    metadata:
+      labels:
+        app: ticketing-postgres
+    spec:
+      containers:
+        - name: ticketing-postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: tele_insight_ticketing_db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-password
+          volumeMounts:
+            - name: ticketing-postgresdb-data
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+  volumeClaimTemplates:
+    - metadata:
+        name: ticketing-postgresdb-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+
+
+
+
+
+
+
+
+
+
+# apiVersion: apps/v1
+# kind: StatefulSet 
+# metadata:
+#  name: postgres-db-one-sfs
+# spec:
+#   serviceName: postgres-db-one
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: postgres-db-one
+#   template:
+#     metadata:
+#       labels:
+#         app: postgres-db-one
+#     spec:
+#       containers:
+#       - name: postgres-db-one
+#         image: postgres:latest
+#         ports:
+#         - containerPort: 5432
+#         env:
+#         - name: POSTGRES_PASSWORD
+#           valueFrom:
+#             secretKeyRef:
+#               name: db-one-password-secret
+#               key: db-one-password
+
+#         volumeMounts:
+#         - name: tele-one-postgresdb-data
+#           mountPath: /var/lib/postgresql/data
+#           subPath: data
+#   volumeClaimTemplates:
+#   - metadata:
+#       name: tele-one-postgresdb-data
+#     spec:
+#       accessModes: [ "ReadWriteOnce" ]
+#       resources:
+#         requests:
+#           storage: 1Gi
+

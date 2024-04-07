@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication-service
+  template:
+    metadata:
+      labels:
+        app: authentication-service
+    spec:
+      containers:
+        - name: authentication-service
+          image: aron918/authentication-service-tele-insight-capstone-project:e4a548d3cd73cf22d94624a3fc5b4039dd3dfe56
+          ports:
+            - containerPort: 8082
+
+          env:
+            - name: SPRING_DATA_REST_BASE_PATH
+              value: /api/v1/auth
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              value: org.postgresql.Driver
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://ticketing-db-svc:5432/tele_insight_ticketing_db
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-user
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-password
+            - name: SERVER_PORT
+              value: "8082"
+            - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+              value: http://service-discovery:8761/eureka/

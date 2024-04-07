@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-api-dep
+  labels:
+    app: gateway-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-api
+  template:
+    metadata:
+      labels:
+        app: gateway-api
+    spec:
+      containers:
+      - name: gateway-api
+        image: aron918/gateway-service-tele-insight-capstone-project:b276971be48e12f4e59b40db0600615d231f4244
+        ports:
+        - containerPort: 8080
+        env:
+          - name: GATEWAY_DISCOVERY_SERVER_URI
+            value: http://service-discovery:8761
+          - name: GATEWAY_TICKETING_SERVICE_URI
+            value: lb://ticketing-service:8081
+          - name: GATEWAY_AUTHENTICATION_SERVICE_URI
+            value: lb://authentication-service:8082
+          - name: GATEWAY_INSIGHT_SERVICE_URI
+            value: lb://insight-service
+          - name: EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE
+            value: http://service-discovery:8761/eureka

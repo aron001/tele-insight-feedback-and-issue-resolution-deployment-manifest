@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: insight-db-dep
+spec:
+  serviceName: "insight-db-svc"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insight-postgres
+  template:
+    metadata:
+      labels:
+        app: insight-postgres
+    spec:
+      containers:
+        - name: insight-postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: tele_insight_blog_db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-password
+          volumeMounts:
+            - name: insight-postgresdb-data
+              mountPath: /var/lib/postgresql/data
+              subPath: data
+  volumeClaimTemplates:
+    - metadata:
+        name: insight-postgresdb-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
+
+
+
+
+
+
+
+
+  #         volumeMounts:
+  #           - name: database-storage
+  #             mountPath: /var/lib/postgresql/data/db
+  # volumeClaimTemplates:
+  #   - metadata:
+  #       name: database-storage
+  #     spec:
+  #       accessModes:
+  #         - ReadWriteOnce
+  #       resources:
+  #         requests:
+  #           storage: 1Gi

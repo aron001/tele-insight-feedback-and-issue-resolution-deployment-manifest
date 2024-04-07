@@ -1,0 +1,15 @@
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: crt-certeficate
+  namespace: tele-insight-dev
+spec:
+  secretName: cert-certeficate-tls
+  issuerRef:
+    name: letsencrypt
+    kind: Issuer
+  dnsNames:
+  - tele-insight-api-dev.a.gebeyalearning.com
+  - fe.teleinsight-dev.a.gebeyalearning.com
+

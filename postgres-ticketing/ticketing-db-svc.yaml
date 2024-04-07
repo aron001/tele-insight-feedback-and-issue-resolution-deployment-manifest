@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ticketing-db-svc
+spec:
+  selector:
+    app: ticketing-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

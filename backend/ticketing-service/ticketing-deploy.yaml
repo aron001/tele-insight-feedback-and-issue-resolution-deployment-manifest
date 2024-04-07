@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticketing-service-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-service
+  template:
+    metadata:
+      labels:
+        app: ticketing-service
+    spec:
+      containers:
+        - name: ticketing-service
+          image: aron918/ticketing-service-tele-insight-capstone-project:23bbcea6fcf791f7db69014cb236077cc7774481
+          ports:
+            - containerPort: 8081
+          env:
+            - name: TI_CORE_DB_URL
+              value: jdbc:postgresql://ticketing-db-svc:5432/tele_insight_ticketing_db
+            - name: TI_CORE_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-user
+            - name: TI_CORE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials-secret
+                  key: postgres-password
+            - name: SERVER_PORT
+              value: "8081"
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://service-discovery:8761/eureka/
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "http://kafka:9092"
